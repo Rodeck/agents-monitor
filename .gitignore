@@ -1,0 +1,19 @@
+# Swift / Xcode
+.build/
+build/
+DerivedData/
+*.swiftpm/
+Packages/
+*.xcodeproj/
+xcuserdata/
+*.xcworkspace/
+
+# macOS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.tmp
