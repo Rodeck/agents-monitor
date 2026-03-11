@@ -2,7 +2,9 @@ import SwiftUI
 
 @main
 struct ClaudeMonitorApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var appState = AppState()
+    @AppStorage("notificationsEnabled") private var notificationsEnabled = true
 
     var body: some Scene {
         MenuBarExtra {
@@ -16,6 +18,8 @@ struct ClaudeMonitorApp: App {
                 Text("No active sessions")
                     .foregroundStyle(.secondary)
             }
+            Divider()
+            Toggle("Notifications", isOn: $notificationsEnabled)
             Divider()
             Button("Quit") {
                 NSApplication.shared.terminate(nil)

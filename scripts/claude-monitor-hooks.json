@@ -50,7 +50,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/claude-monitor-hook.sh attention"
+            "command": "~/.claude/hooks/claude-monitor-hook.sh waiting"
           }
         ]
       }

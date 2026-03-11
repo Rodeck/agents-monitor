@@ -22,5 +22,9 @@ cp ".build/release/${APP_NAME}" "$APP_BUNDLE/Contents/MacOS/${APP_NAME}"
 # Copy Info.plist
 cp "${APP_NAME}/Resources/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
 
+# Ad-hoc sign (required for UserNotifications framework)
+echo "Signing app bundle..."
+codesign --force --sign - "$APP_BUNDLE"
+
 echo "App bundle created at: $APP_BUNDLE"
 echo "Run with: open $APP_BUNDLE"

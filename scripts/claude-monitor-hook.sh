@@ -29,7 +29,26 @@ fi
 [ -z "$SID" ] && exit 0
 
 TS=$(date +%s)
-MSG="{\"sid\":\"${SID}\",\"state\":\"${STATE}\",\"cwd\":\"${CWD}\",\"ts\":${TS}}"
+
+# Walk up process tree to find the terminal application (with a bundle ID)
+TERMINAL_PID=""
+APP_BUNDLE=""
+WALK_PID=$PPID
+for _ in 1 2 3 4 5 6 7 8; do
+    WALK_PID=$(ps -o ppid= -p "$WALK_PID" 2>/dev/null | tr -d ' ')
+    [ -z "$WALK_PID" ] || [ "$WALK_PID" = "1" ] || [ "$WALK_PID" = "0" ] && break
+    FOUND_BUNDLE=$(lsappinfo info -only bundleid "$(lsappinfo find pid="$WALK_PID" 2>/dev/null)" 2>/dev/null | grep -o '"[^"]*"' | tail -1 | tr -d '"')
+    if [ -n "$FOUND_BUNDLE" ]; then
+        TERMINAL_PID="$WALK_PID"
+        APP_BUNDLE="$FOUND_BUNDLE"
+        break
+    fi
+done
+
+MSG="{\"sid\":\"${SID}\",\"state\":\"${STATE}\",\"cwd\":\"${CWD}\",\"ts\":${TS}"
+[ -n "$TERMINAL_PID" ] && [ "$TERMINAL_PID" -gt 1 ] 2>/dev/null && MSG="${MSG},\"ppid\":${TERMINAL_PID}"
+[ -n "$APP_BUNDLE" ] && MSG="${MSG},\"app\":\"${APP_BUNDLE}\""
+MSG="${MSG}}"
 
 # Send to socket; fail silently if app not running
 echo "$MSG" | nc -U "$SOCKET" 2>/dev/null || true

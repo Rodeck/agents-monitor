@@ -5,4 +5,6 @@ struct SessionInfo {
     var state: StatusState
     var workingDir: String
     var lastEventTime: Date
+    var parentPid: Int?
+    var parentApp: String?
 }
