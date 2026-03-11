@@ -8,6 +8,15 @@ struct ClaudeMonitorApp: App {
         MenuBarExtra {
             Text("Claude Monitor")
             Divider()
+            let count = appState.activeSessionCount
+            if count > 0 {
+                Text("\(count) session\(count == 1 ? "" : "s") active")
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("No active sessions")
+                    .foregroundStyle(.secondary)
+            }
+            Divider()
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }
@@ -20,9 +29,13 @@ struct ClaudeMonitorApp: App {
 
 @Observable
 final class AppState {
-    private var statusProvider = MockStatusProvider()
+    private var statusProvider = HookStatusProvider()
     private var flashVisible = true
     private var flashTimer: Timer?
+
+    var activeSessionCount: Int {
+        statusProvider.sessionManager.activeSessionCount
+    }
 
     var currentIcon: NSImage {
         let status = statusProvider.currentStatus

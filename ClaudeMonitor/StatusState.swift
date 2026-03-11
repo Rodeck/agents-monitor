@@ -15,8 +15,8 @@ enum StatusState: CaseIterable {
 
     var isAnimated: Bool {
         switch self {
-        case .idle: false
-        case .running, .attention: true
+        case .idle, .running: false
+        case .attention: true
         }
     }
 }
