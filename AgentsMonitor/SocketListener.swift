@@ -4,10 +4,10 @@ import Network
 final class SocketListener {
     private var listener: NWListener?
     private let socketPath: String
-    private let queue = DispatchQueue(label: "claude-monitor.socket")
+    private let queue = DispatchQueue(label: "agents-monitor.socket")
     var onEvent: ((StateEvent) -> Void)?
 
-    init(socketPath: String = "/tmp/claude-monitor.sock") {
+    init(socketPath: String = "/tmp/agents-monitor.sock") {
         self.socketPath = socketPath
     }
 

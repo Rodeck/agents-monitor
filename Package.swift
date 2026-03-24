@@ -2,14 +2,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "ClaudeMonitor",
+    name: "AgentsMonitor",
     platforms: [
         .macOS(.v14)
     ],
     targets: [
         .executableTarget(
-            name: "ClaudeMonitor",
-            path: "ClaudeMonitor",
+            name: "AgentsMonitor",
+            path: "AgentsMonitor",
             exclude: ["Resources/Info.plist"]
         )
     ]

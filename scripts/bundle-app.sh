@@ -4,7 +4,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-APP_NAME="ClaudeMonitor"
+APP_NAME="AgentsMonitor"
 APP_BUNDLE="$PROJECT_DIR/build/${APP_NAME}.app"
 
 echo "Building ${APP_NAME}..."

@@ -14,7 +14,7 @@ final class NotificationManager {
         guard shouldSendNotification(for: session.sessionId) else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "Claude needs attention"
+        content.title = "Agent needs attention"
         content.body = (session.workingDir as NSString).lastPathComponent
         content.sound = .default
         content.categoryIdentifier = "SESSION_ATTENTION"

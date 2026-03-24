@@ -8,13 +8,13 @@ final class WindowFocusManager {
         let dirName = (workingDirectory as NSString).lastPathComponent
 
         let work = { [self] in
-            NSLog("[ClaudeMonitor] focusWindow — pid=%d bundle=%@ dir=%@ axTrusted=%d",
+            NSLog("[AgentsMonitor] focusWindow — pid=%d bundle=%@ dir=%@ axTrusted=%d",
                   processId, bundleIdentifier ?? "nil", dirName, AXIsProcessTrusted() ? 1 : 0)
 
             // Try Accessibility-based window targeting to raise the correct tab/window
             if AXIsProcessTrusted() && processId > 0 {
                 let raised = raiseMatchingWindow(pid: processId, directoryName: dirName)
-                NSLog("[ClaudeMonitor] raiseMatchingWindow=%d", raised ? 1 : 0)
+                NSLog("[AgentsMonitor] raiseMatchingWindow=%d", raised ? 1 : 0)
             } else if !hasPromptedAccessibility && processId > 0 {
                 promptAccessibilityIfNeeded()
             }
@@ -22,13 +22,13 @@ final class WindowFocusManager {
             // `open -b` is the most reliable way for an LSUIElement app to
             // bring another application to the foreground — use it first.
             if let bundleId = bundleIdentifier, !bundleId.isEmpty {
-                NSLog("[ClaudeMonitor] opening via CLI: %@", bundleId)
+                NSLog("[AgentsMonitor] opening via CLI: %@", bundleId)
                 openAppViaCLI(bundleId: bundleId)
             } else if processId > 0 {
-                NSLog("[ClaudeMonitor] activating by PID (no bundleId)")
+                NSLog("[AgentsMonitor] activating by PID (no bundleId)")
                 activateApp(pid: processId)
             } else {
-                NSLog("[ClaudeMonitor] no bundleId and no PID — cannot focus")
+                NSLog("[AgentsMonitor] no bundleId and no PID — cannot focus")
             }
         }
 

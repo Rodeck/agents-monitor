@@ -1,17 +1,17 @@
 #!/bin/bash
-# Claude Monitor — one-command setup
+# Agents Monitor — one-command setup
 # Usage: ./setup.sh
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-APP_NAME="ClaudeMonitor"
+APP_NAME="AgentsMonitor"
 APP_BUNDLE="$SCRIPT_DIR/build/${APP_NAME}.app"
 APP_INSTALL_DIR="/Applications"
 APP_INSTALL_PATH="$APP_INSTALL_DIR/${APP_NAME}.app"
-HOOK_SRC="$SCRIPT_DIR/scripts/claude-monitor-hook.sh"
-HOOK_DST="$HOME/.claude/hooks/claude-monitor-hook.sh"
+HOOK_SRC="$SCRIPT_DIR/scripts/agents-monitor-hook.sh"
+HOOK_DST="$HOME/.claude/hooks/agents-monitor-hook.sh"
 SETTINGS_FILE="$HOME/.claude/settings.json"
-HOOKS_TEMPLATE="$SCRIPT_DIR/scripts/claude-monitor-hooks.json"
+HOOKS_TEMPLATE="$SCRIPT_DIR/scripts/agents-monitor-hooks.json"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -24,8 +24,8 @@ warn()  { echo -e "${YELLOW}!${NC} $1"; }
 error() { echo -e "${RED}✗${NC} $1"; exit 1; }
 
 echo ""
-echo -e "${BOLD}Claude Monitor Setup${NC}"
-echo "Menu bar app that shows Claude Code session status"
+echo -e "${BOLD}Agents Monitor Setup${NC}"
+echo "Menu bar app that shows AI agent session status"
 echo ""
 
 # ── Prerequisites ──────────────────────────────────────────────────
@@ -122,8 +122,8 @@ merge_hooks_no_jq() {
     # Without jq: check if hooks already present, if not, do a simple merge
     local settings_content="$1"
 
-    if echo "$settings_content" | grep -q "claude-monitor-hook.sh"; then
-        warn "Claude Monitor hooks already present in settings — skipping"
+    if echo "$settings_content" | grep -q "agents-monitor-hook.sh"; then
+        warn "Agents Monitor hooks already present in settings — skipping"
         echo "$settings_content"
         return
     fi
@@ -158,8 +158,8 @@ if [ -f "$SETTINGS_FILE" ]; then
     EXISTING=$(cat "$SETTINGS_FILE")
 
     # Check if hooks already configured
-    if echo "$EXISTING" | grep -q "claude-monitor-hook.sh"; then
-        info "Claude Monitor hooks already configured — skipping"
+    if echo "$EXISTING" | grep -q "agents-monitor-hook.sh"; then
+        info "Agents Monitor hooks already configured — skipping"
     else
         if command -v jq &>/dev/null; then
             MERGED=$(merge_hooks "$EXISTING" "$HOOKS_TEMPLATE")
@@ -180,15 +180,15 @@ fi
 # ── Launch ─────────────────────────────────────────────────────────
 
 echo ""
-echo -e "${BOLD}Launching Claude Monitor...${NC}"
+echo -e "${BOLD}Launching Agents Monitor...${NC}"
 open "$APP_INSTALL_PATH"
-info "Claude Monitor is running in your menu bar"
+info "Agents Monitor is running in your menu bar"
 
 # ── Login Item hint ────────────────────────────────────────────────
 
 echo ""
 echo -e "${BOLD}Optional: Start on login${NC}"
-echo "  System Settings → General → Login Items → add Claude Monitor"
+echo "  System Settings → General → Login Items → add Agents Monitor"
 
 # ── Done ───────────────────────────────────────────────────────────
 
@@ -197,8 +197,8 @@ echo -e "${GREEN}${BOLD}Setup complete!${NC}"
 echo ""
 echo "  Menu bar icons:"
 echo "    ● Grey     — no active sessions"
-echo "    ● Green    — Claude is working"
-echo "    ● Orange   — Claude needs your attention"
+echo "    ● Green    — agent is working"
+echo "    ● Orange   — agent needs your attention"
 echo ""
 echo "  Start a Claude Code session to see it in action."
 echo "  To uninstall: ./uninstall.sh"

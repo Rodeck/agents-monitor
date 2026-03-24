@@ -1,17 +1,17 @@
 #!/bin/bash
-# Claude Monitor hook script for Claude Code
-# Sends session state events to the Claude Monitor app via Unix socket.
+# Agents Monitor hook script for Claude Code
+# Sends session state events to the Agents Monitor app via Unix socket.
 #
-# Usage: claude-monitor-hook.sh <state>
+# Usage: agents-monitor-hook.sh <state>
 #   state: running | attention | idle
 #
 # Reads Claude Code hook JSON from stdin (contains session_id, cwd, etc.)
-# Sends compact JSON to /tmp/claude-monitor.sock
+# Sends compact JSON to /tmp/agents-monitor.sock
 # Exits 0 silently on any failure (must never block Claude Code).
 
 set -e
 
-SOCKET="/tmp/claude-monitor.sock"
+SOCKET="/tmp/agents-monitor.sock"
 STATE="${1:-running}"
 INPUT=$(cat)
 

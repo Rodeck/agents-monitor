@@ -1,14 +1,14 @@
 import SwiftUI
 
 @main
-struct ClaudeMonitorApp: App {
+struct AgentsMonitorApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var appState = AppState()
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
 
     var body: some Scene {
         MenuBarExtra {
-            Text("Claude Monitor")
+            Text("Agents Monitor")
             Divider()
             let count = appState.activeSessionCount
             if count > 0 {

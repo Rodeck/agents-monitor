@@ -26,12 +26,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         let parentApp = userInfo["parentApp"] as? String ?? ""
         let workingDir = userInfo["workingDir"] as? String ?? ""
 
-        NSLog("[ClaudeMonitor] Notification clicked — pid=%d app=%@ cwd=%@", parentPid, parentApp, workingDir)
+        NSLog("[AgentsMonitor] Notification clicked — pid=%d app=%@ cwd=%@", parentPid, parentApp, workingDir)
 
         // Use the detected parent app, or fall back to known terminal apps
         let bundleId = !parentApp.isEmpty ? parentApp : detectTerminalBundleId()
 
-        NSLog("[ClaudeMonitor] Resolved bundleId=%@", bundleId ?? "nil")
+        NSLog("[AgentsMonitor] Resolved bundleId=%@", bundleId ?? "nil")
 
         windowFocusManager.focusWindow(
             processId: pid_t(parentPid),
