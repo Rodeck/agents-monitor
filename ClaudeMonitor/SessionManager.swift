@@ -5,6 +5,7 @@ final class SessionManager {
     private(set) var sessions: [String: SessionInfo] = [:]
     private var cleanupTimer: Timer?
     private let staleTimeout: TimeInterval = 300
+    private let attentionTimeout: TimeInterval = 15
     var onAttention: ((SessionInfo) -> Void)?
     var onSessionRemoved: ((String) -> Void)?
 
@@ -46,8 +47,9 @@ final class SessionManager {
     }
 
     func startCleanupTimer() {
-        cleanupTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+        cleanupTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
             self?.cleanupStaleSessions()
+            self?.downgradeStaleAttention()
         }
     }
 
@@ -57,6 +59,24 @@ final class SessionManager {
         for id in staleIds {
             sessions.removeValue(forKey: id)
             onSessionRemoved?(id)
+        }
+    }
+
+    /// Downgrades sessions stuck in `.attention` to `.waiting` when no new
+    /// event has arrived within `attentionTimeout` seconds.  This handles the
+    /// case where the user denies a permission request and the agent becomes
+    /// idle without sending a follow-up state event.
+    func downgradeStaleAttention() {
+        let cutoff = Date().addingTimeInterval(-attentionTimeout)
+        for (id, info) in sessions where info.state == .attention && info.lastEventTime <= cutoff {
+            sessions[id] = SessionInfo(
+                sessionId: info.sessionId,
+                state: .waiting,
+                workingDir: info.workingDir,
+                lastEventTime: info.lastEventTime,
+                parentPid: info.parentPid,
+                parentApp: info.parentApp
+            )
         }
     }
 

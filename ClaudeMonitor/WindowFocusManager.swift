@@ -8,19 +8,27 @@ final class WindowFocusManager {
         let dirName = (workingDirectory as NSString).lastPathComponent
 
         let work = { [self] in
+            NSLog("[ClaudeMonitor] focusWindow — pid=%d bundle=%@ dir=%@ axTrusted=%d",
+                  processId, bundleIdentifier ?? "nil", dirName, AXIsProcessTrusted() ? 1 : 0)
+
+            // Try Accessibility-based window targeting to raise the correct tab/window
             if AXIsProcessTrusted() && processId > 0 {
-                if raiseMatchingWindow(pid: processId, directoryName: dirName) {
-                    activateApp(pid: processId)
-                    return
-                }
+                let raised = raiseMatchingWindow(pid: processId, directoryName: dirName)
+                NSLog("[ClaudeMonitor] raiseMatchingWindow=%d", raised ? 1 : 0)
             } else if !hasPromptedAccessibility && processId > 0 {
                 promptAccessibilityIfNeeded()
             }
 
+            // `open -b` is the most reliable way for an LSUIElement app to
+            // bring another application to the foreground — use it first.
             if let bundleId = bundleIdentifier, !bundleId.isEmpty {
-                activateAppByBundleId(bundleId)
+                NSLog("[ClaudeMonitor] opening via CLI: %@", bundleId)
+                openAppViaCLI(bundleId: bundleId)
             } else if processId > 0 {
+                NSLog("[ClaudeMonitor] activating by PID (no bundleId)")
                 activateApp(pid: processId)
+            } else {
+                NSLog("[ClaudeMonitor] no bundleId and no PID — cannot focus")
             }
         }
 
@@ -44,13 +52,16 @@ final class WindowFocusManager {
     }
 
     private func activateViaWorkspace(app: NSRunningApplication) {
-        guard let bundleURL = app.bundleURL else {
-            app.activate()
-            return
-        }
-        let config = NSWorkspace.OpenConfiguration()
-        config.activates = true
-        NSWorkspace.shared.openApplication(at: bundleURL, configuration: config)
+        app.activate()
+    }
+
+    /// Reliable fallback: `open -b` always brings the app to the foreground,
+    /// even when called from an LSUIElement (background) agent app.
+    private func openAppViaCLI(bundleId: String) {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        task.arguments = ["-b", bundleId]
+        try? task.run()
     }
 
     // MARK: - Accessibility Window Targeting

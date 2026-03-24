@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/claude-monitor-hook.sh running"
+            "command": "~/.claude/hooks/claude-monitor-hook.sh waiting"
           }
         ]
       }
